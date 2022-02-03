@@ -1,0 +1,41 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "nginx-tanu"
+  namespace: "default"
+  labels:
+    app: "nginx-tanu"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "nginx-tanu"
+  template:
+    metadata:
+      labels:
+        app: "nginx-tanu"
+    spec:
+      containers:
+      - name: "onlinevegetablesales-sha256-1"
+        image: "gcr.io/charged-ground-326209/github.com/tanu02950/onlinevegetablesales@sha256:c84a733ef3cc6ffcede51be58f74d3b6e207310ef3b88fe7a9649366fc512d1e"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "nginx-tanu-hpa-jilj"
+  namespace: "default"
+  labels:
+    app: "nginx-tanu"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "nginx-tanu"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
